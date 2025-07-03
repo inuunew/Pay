@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inuu Payment</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      background-size: 200% 200%;
+      animation: gradientShift 10s ease infinite;
+      color: white;
+      overflow-x: hidden;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    header {
+      text-align: center;
+      padding: 40px 20px 10px;
+    }
+
+    header img {
+      width: 100px;
+      margin-bottom: 10px;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 24px;
+      padding: 20px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .card {
+      background: #f1f1f1;
+      color: #333;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 340px;
+      padding: 30px 20px;
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s;
+      border: 4px solid transparent;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+    }
+
+    .card-qris:hover  { border-color: rgba(255, 0, 0, 0.5); }
+    .card-dana:hover  { border-color: rgba(0, 102, 255, 0.5); }
+    .card-ovo:hover   { border-color: rgba(102, 0, 204, 0.5); }
+    .card-gopay:hover { border-color: rgba(0, 204, 255, 0.5); }
+
+    .card img {
+      width: 80px;
+      margin-bottom: 15px;
+    }
+
+    .card h3 {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .popup, .overlay {
+      display: none;
+    }
+
+    .overlay.active {
+      display: block;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      z-index: 999;
+    }
+
+    .popup.active {
+      display: block;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      background: #fff;
+      color: #333;
+      padding: 30px;
+      border-radius: 16px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+      z-index: 1000;
+      transform: translate(-50%, -50%) scale(0.85);
+      opacity: 0;
+      animation: popupFadeIn 0.5s ease-out forwards, popupScaleIn 0.5s ease-out forwards;
+    }
+
+    .popup.closing {
+      animation: popupFadeOut 0.4s ease-out forwards, popupScaleOut 0.4s ease-out forwards;
+    }
+
+    .popup-qris  { border-top: 6px solid rgba(255, 0, 0, 0.99); }
+    .popup-dana  { border-top: 6px solid rgba(0, 102, 255, 0.99); }
+    .popup-ovo   { border-top: 6px solid rgba(102, 0, 204, 0.99); }
+    .popup-gopay { border-top: 6px solid rgba(0, 204, 255, 0.99); }
+
+    .popup h2 {
+      margin-top: 0;
+    }
+
+    #qrContainer {
+      margin: 20px 0;
+      text-align: center;
+      display: none;
+    }
+
+    #qrContainer img {
+      max-width: 300px;
+      width: 100%;
+      border-radius: 12px;
+      transition: transform 0.3s ease;
+    }
+
+    #qrContainer img:hover {
+      transform: scale(1.05);
+      cursor: zoom-in;
+    }
+
+    .popup p {
+      font-size: 16px;
+    }
+
+    .popup a button {
+      margin-top: 15px;
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      background-color: #25D366;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .popup a button:hover {
+      background-color: #1ebe5b;
+    }
+
+    @keyframes popupFadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    @keyframes popupScaleIn {
+      0% { transform: translate(-50%, -50%) scale(0.85); }
+      100% { transform: translate(-50%, -50%) scale(1); }
+    }
+
+    @keyframes popupFadeOut {
+      0% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    @keyframes popupScaleOut {
+      0% { transform: translate(-50%, -50%) scale(1); }
+      100% { transform: translate(-50%, -50%) scale(0.85); }
+    }
+
+    @media screen and (max-width: 1000px) {
+      .container {
+        flex-direction: column !important;
+        align-items: center !important;
+        display: flex !important;
+      }
+
+      .card {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <img src="https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg" alt="Logo" />
+  <h1>Pilih Metode Pembayaran</h1>
+</header>
+
+<div class="container">
+  <div class="card card-qris" onclick="openPopup('QRIS DANA', 'Scan QR untuk bayar DANA', 'https://files.catbox.moe/hrrmsq.jpg', 'qris')">
+    <img src="https://files.catbox.moe/b5cvhj.jpg" alt="QRIS" />
+    <h3>QRIS</h3>
+  </div>
+
+  <div class="card card-dana" onclick="openPopup('DANA', 'Nomor DANA: 0831-6055-6330', null, 'dana')">
+    <img src="https://files.catbox.moe/lgzfl0.png" alt="DANA" />
+    <h3>DANA</h3>
+  </div>
+
+  <div class="card card-ovo" onclick="openPopup('OVO', 'Nomor OVO: Belum Ada', null, 'ovo')">
+    <img src="https://files.catbox.moe/4ktdpn.png" alt="OVO" />
+    <h3>OVO</h3>
+  </div>
+
+  <div class="card card-gopay" onclick="openPopup('GoPay', 'Nomor GoPay: 0831-6055-6330', null, 'gopay')">
+    <img src="https://files.catbox.moe/9zv0ei.png" alt="GoPay" />
+    <h3>GoPay</h3>
+  </div>
+</div>
+
+<div class="overlay" id="overlay" onclick="closePopup()"></div>
+
+<div class="popup" id="popupBox">
+  <h2 id="paymentTitle">Pembayaran</h2>
+  <div id="qrContainer">
+    <a id="qrLink" href="#" target="_blank">
+      <img id="qrImage" src="" alt="QR Code" />
+    </a>
+  </div>
+  <p id="paymentDetails"></p>
+  <a id="waButton" href="#" target="_blank">
+    <button>Kirim Bukti via WhatsApp</button>
+  </a>
+</div>
+
+<script>
+  function openPopup(method, detail, qrImageUrl = null, type = '') {
+    const popup = document.getElementById('popupBox');
+    popup.className = 'popup active popup-' + type;
+
+    document.getElementById('paymentTitle').innerText = method;
+    document.getElementById('paymentDetails').innerText = detail;
+
+    const qrImage = document.getElementById('qrImage');
+    const qrLink = document.getElementById('qrLink');
+    const qrContainer = document.getElementById('qrContainer');
+
+    if (qrImageUrl) {
+      qrImage.src = qrImageUrl;
+      qrLink.href = qrImageUrl;
+      qrContainer.style.display = 'block';
+    } else {
+      qrContainer.style.display = 'none';
+    }
+
+    const nomorWA = "573168148738";
+    const pesan = `Halo, saya telah melakukan pembayaran via ${method}.\n\nDetail:\n${detail}`;
+    document.getElementById('waButton').href = `https://wa.me/${nomorWA}?text=${encodeURIComponent(pesan)}`;
+
+    document.getElementById('overlay').classList.add('active');
+  }
+
+  function closePopup() {
+    const popup = document.getElementById('popupBox');
+    popup.classList.add('closing');
+
+    setTimeout(() => {
+      popup.className = 'popup';
+      document.getElementById('overlay').classList.remove('active');
+    }, 400); // sama dengan durasi animasi
+  }
+</script>
+
+</body>
+</html>
